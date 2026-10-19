@@ -1,0 +1,33 @@
+// เปลี่ยนเลขเวอร์ชันนี้ทุกครั้งที่แก้ไฟล์ เพื่อให้เครื่องผู้ใช้โหลดของใหม่
+const CACHE = "ga-calc-v30";
+const FILES = ["./", "index.html", "manifest.webmanifest",
+  "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/favicon-32.png", "images/mother-baby.png", "images/ultrasound-checkup.png", "images/blood-tubes.png", "images/anc-doctor.jpg", "images/edc-family.jpg"];
+
+self.addEventListener("install", e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener("activate", e => {
+  e.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+// แสดงจากแคชก่อน (เปิดได้แม้ออฟไลน์) แล้วอัปเดตแคชเบื้องหลัง
+self.addEventListener("fetch", e => {
+  if (e.request.method !== "GET") return;
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      const net = fetch(e.request).then(res => {
+        if (res && (res.ok || res.type === "opaque")) {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, copy));
+        }
+        return res;
+      }).catch(() => cached);
+      return cached || net;
+    })
+  );
+});

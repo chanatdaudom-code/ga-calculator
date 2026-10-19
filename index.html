@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#d62a8a">
+<meta name="description" content="เครื่องคำนวณอายุครรภ์ กำหนดคลอด และนัดฝากครรภ์">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="คำนวณ GA">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>คำนวณอายุครรภ์ (GA)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#faf6f3; --surface:#ffffff; --ink:#26272b; --muted:#6b6670; --line:#e7dfd9;
+  --rose:#b83a5a; --rose-soft:#f8e3e8; --teal:#1f7a74; --teal-soft:#dff1ee;
+  --green:#1b7a3a; --green-soft:#d9eedd; --blue:#1649a8; --pink:#d62a8a; --orange:#d9600a; --navy:#0b2a6f; --red:#c1121f;
+  --peach:#fde8d8; --sky:#dcecf5; --leaf:#e3efd6; --warn:#a4560f; --warn-soft:#fdeacc;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1a1719; --surface:#242023; --ink:#f1ebe7; --muted:#a89fa6; --line:#3a3338;
+    --rose:#f08aa4; --rose-soft:#4a2530; --teal:#6fcfc6; --teal-soft:#1d3b38;
+    --green:#6fd68e; --green-soft:#1f3a29; --blue:#8db8ff; --pink:#ff8cc6; --orange:#ffb066; --navy:#7fa8f2; --red:#ff6b78; --peach:#4a3526; --sky:#243845; --leaf:#2f3a24; --warn:#f0b46a; --warn-soft:#46321a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1a1719; --surface:#242023; --ink:#f1ebe7; --muted:#a89fa6; --line:#3a3338;
+  --rose:#f08aa4; --rose-soft:#4a2530; --teal:#6fcfc6; --teal-soft:#1d3b38;
+  --green:#6fd68e; --green-soft:#1f3a29; --blue:#8db8ff; --pink:#ff8cc6; --orange:#ffb066; --navy:#7fa8f2; --red:#ff6b78; --peach:#4a3526; --sky:#243845; --leaf:#2f3a24; --warn:#f0b46a; --warn-soft:#46321a;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif;line-height:1.6;font-size:16px}
+.wrap{max-width:880px;margin:0 auto;padding:20px 16px 56px}
+.us-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.us-head h2{margin:0}
+#p-us .us-head h2,#p-edc .us-head h2{font-size:1.45rem;font-weight:700;line-height:1.3;color:var(--orange)}
+@media(max-width:480px){#p-us .us-head h2,#p-edc .us-head h2{font-size:1.2rem}}
+.us-head img{width:112px;height:auto;flex:none;display:block}
+.hd img,.us-head img{background:#fff;border-radius:12px;padding:4px}
+#p-ogtt .us-head img{width:120px}
+#p-anc .us-head img{width:170px}
+#p-edc .us-head img{width:130px}
+@media(max-width:480px){.us-head img,#p-ogtt .us-head img{width:84px}#p-anc .us-head img{width:110px}#p-edc .us-head img{width:90px}}
+.hd{display:flex;align-items:center;gap:14px}
+.hd img{width:150px;height:auto;flex:none;display:block}
+@media(max-width:480px){.hd img{width:104px}}
+header h1{color:var(--pink);font-size:1.5rem;font-weight:700;margin:8px 0 2px;letter-spacing:-.01em}
+header p{margin:0;color:var(--muted);font-size:.95rem}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:16px}
+.panel h2{font-size:1.05rem;margin:0 0 12px;font-weight:600}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+label{display:block;font-size:.88rem;color:var(--muted);margin-bottom:4px;font-weight:500}
+input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:9px 11px;min-height:44px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--teal);outline-offset:1px}
+label[for="lmp"]{color:var(--red);font-size:1.15rem;font-weight:700;line-height:1.4}
+.ic{width:26px;height:26px;display:block;margin:0 auto}
+.ic.ic-hi{height:30px}
+th.icn,td.icn{text-align:center}
+.dtxt input{font-variant-numeric:tabular-nums}
+.dtxt input[aria-invalid="true"]{border-color:var(--red);outline:2px solid var(--red)}
+.be{font-size:.82rem;color:var(--teal);margin-top:3px;min-height:1.3em}
+.row2{display:flex;gap:8px}
+.row2>div{flex:1}
+
+/* hero result */
+.hero{display:grid;gap:18px;grid-template-columns:1.2fr 1fr;align-items:center}
+@media(max-width:640px){.hero{grid-template-columns:1fr}}
+.galbl{font-size:1.15rem;font-weight:700;line-height:1.4;color:var(--orange)}
+.ga-big{font-size:2.6rem;font-weight:700;line-height:1.15;color:var(--green);letter-spacing:-.02em}
+.ga-big small{font-size:1rem;font-weight:500;color:var(--muted);margin:0 10px 0 4px}
+.sub{color:var(--muted);font-size:.9rem}
+.bar{position:relative;height:14px;border-radius:99px;background:var(--green-soft);overflow:hidden;margin:12px 0 6px}
+.bar>i{position:absolute;inset:0 auto 0 0;background:var(--green);border-radius:99px;transition:width .35s ease}
+.ticks{position:relative;height:18px;font-size:.72rem;color:var(--muted)}
+.ticks span{position:absolute;transform:translateX(-50%)}
+.tri{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.82rem;font-weight:600;background:var(--teal-soft);color:var(--teal)}
+.bigdate{padding:6px 0 10px;border-bottom:1px dashed var(--line)}
+.bigdate .lbl{font-size:1.3rem;font-weight:700;line-height:1.3;color:var(--pink)}
+.bigdate .val{font-size:1.45rem;font-weight:700;line-height:1.3;color:var(--blue)}
+#us-out .kv{align-items:center}
+#us-out .kv span{color:var(--pink);font-weight:700;font-size:1.15rem}
+#us-out .kv b{color:var(--navy);font-size:1.45rem;line-height:1.3}
+#edc-out .kv:first-child{align-items:center}
+#edc-out .kv:first-child span{color:var(--pink);font-weight:700;font-size:1.15rem}
+#edc-out .kv:nth-child(2){align-items:center}
+#edc-out .kv:nth-child(2) span{color:var(--orange);font-weight:700;font-size:1.15rem}
+#edc-out .kv:nth-child(2) b{color:var(--orange);font-size:1.45rem;line-height:1.3}
+#edc-out .kv:first-child b{color:var(--blue);font-size:1.45rem;line-height:1.3}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.kv:last-child{border-bottom:0}
+.kv b{font-weight:600;text-align:right}
+
+/* tabs */
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-top:22px;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.tabs button{flex:0 0 auto;font:inherit;font-weight:500;padding:10px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:44px}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tabpanel[hidden]{display:none}
+
+/* tables */
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:.85rem}
+tr.c1 td:first-child{background:var(--peach)} tr.c2 td:first-child{background:var(--sky)}
+tr.c3 td:first-child{background:var(--leaf)} tr.c4 td:first-child{background:var(--warn-soft)}
+tr.c5 td:first-child{background:var(--leaf)} tr.c6 td:first-child{background:var(--rose-soft)}
+tr.cur td{background:var(--teal-soft)}
+.hrbox{position:relative}
+.hr-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.hrbox .hr-head h2.hrtitle{margin:0}
+.hr-btn{font:inherit;font-weight:600;font-size:.88rem;color:var(--pink);background:transparent;border:1.5px solid var(--pink);border-radius:99px;padding:6px 14px;cursor:pointer;min-height:36px}
+.hr-pop{position:absolute;right:14px;top:56px;z-index:20;width:min(340px,calc(100% - 28px));background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.28);padding:12px 14px}
+.hr-pop[hidden]{display:none}
+.hr-pop-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;color:var(--pink)}
+.hr-pop-head button{font:inherit;border:0;background:transparent;color:var(--muted);cursor:pointer;min-width:36px;min-height:36px;font-size:1rem}
+.hr-pop th,.hr-pop td{white-space:normal;padding:6px 8px;font-size:.85rem}
+.hrbox{border:2px solid var(--pink);border-radius:14px;padding:16px;margin:0 0 24px}
+.hrbox h2.hrtitle{color:var(--pink);font-size:1.2rem;margin:0 0 10px}
+.anc-cols{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}
+.popcard{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--bg);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.popcard h3{font-size:.95rem;font-weight:600;color:var(--pink);margin:0 0 8px;line-height:1.4}
+.popcard th,.popcard td{white-space:normal;padding:6px 8px;font-size:.85rem}
+.popcard .note{margin:8px 0 0;font-size:.78rem}
+@media(max-width:760px){.anc-cols{grid-template-columns:minmax(0,1fr)}}
+td.adj{font-weight:600;color:var(--rose)}
+
+.btn{font:inherit;font-weight:600;border:0;border-radius:10px;padding:10px 16px;background:var(--teal);color:#fff;cursor:pointer;min-height:44px}
+:root[data-theme="dark"] .btn{color:#10201f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#10201f}}
+.note{font-size:.85rem;color:var(--muted);margin-top:10px}
+.alert{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:.9rem;margin-top:12px}
+.empty{color:var(--muted);font-size:.92rem;padding:6px 0}
+.range{font-size:1.5rem;font-weight:700;color:var(--teal)}
+.chip{display:inline-block;padding:2px 10px;border-radius:99px;font-weight:600;font-size:.88rem;background:var(--rose-soft);color:var(--rose)}
+.rems{display:grid;gap:6px;margin-top:10px;grid-template-columns:repeat(auto-fit,minmax(138px,1fr))}
+.rem{border:1px solid var(--line);border-left-width:3px;border-radius:6px;padding:4px 7px;background:var(--bg)}
+.rem b{display:block;font-weight:600;font-size:.78rem;line-height:1.3}
+.rem span{font-size:.68rem;line-height:1.3;color:var(--muted)}
+.rem.now{border-color:#7a0f1e;background:#a3162a;color:#fff}
+.rem.now b,.rem.now span{color:#fff}
+.og-alert{background:#a3162a;color:#fff;border-radius:10px;padding:12px 14px;font-weight:600;margin-top:12px}
+.og-ok{background:var(--teal-soft);color:var(--teal);border-radius:10px;padding:10px 12px;font-weight:600;margin-top:12px}
+td.hi{color:#c0182f;font-weight:700}
+:root[data-theme="dark"] td.hi{color:#ff8a98}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) td.hi{color:#ff8a98}}
+td.ok{color:var(--teal);font-weight:600}
+td.lo{color:var(--orange);font-weight:700}
+.rem.soon{border-color:var(--teal)}
+.rem.past{border-color:var(--warn)}
+footer{margin-top:26px;font-size:.82rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="gG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6bff6b"/><stop offset=".45" stop-color="#12c212"/><stop offset="1" stop-color="#008a00"/></linearGradient>
+    <linearGradient id="gR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a5a"/><stop offset=".55" stop-color="#e8141f"/><stop offset="1" stop-color="#b00a14"/></linearGradient>
+  </defs>
+</svg>
+
+<div class="wrap">
+<header class="hd">
+  <img src="images/mother-baby.png" alt="" width="150" height="169">
+  <div><h1>คำนวณอายุครรภ์ (GA)</h1>
+  <p>กรอกวันแรกของการมีประจำเดือนครั้งสุดท้าย (LMP) แล้วระบบจะคำนวณให้ทันที</p></div>
+</header>
+
+<section class="panel" aria-labelledby="h-main">
+  <h2 id="h-main">ข้อมูลหลัก</h2>
+  <div class="grid">
+    <div>
+      <label for="lmp">LMP (วันแรกของประจำเดือนครั้งสุดท้าย)</label>
+      <input type="hidden" id="lmp">
+      <div class="be" id="lmp-be"></div>
+    </div>
+    <div>
+      <label for="svc">วันที่มารับบริการ</label>
+      <input type="hidden" id="svc">
+      <div class="be" id="svc-be"></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" aria-live="polite">
+  <div id="hero"><div class="empty">กรอก LMP เพื่อดูอายุครรภ์และกำหนดคลอด</div></div>
+</section>
+
+<div class="tabs" role="tablist" aria-label="เครื่องมือคำนวณ">
+  <button role="tab" id="t-anc" aria-selected="true" aria-controls="p-anc">นัดฝากครรภ์</button>
+  <button role="tab" id="t-us" aria-selected="false" aria-controls="p-us">จากอัลตราซาวด์</button>
+  <button role="tab" id="t-edc" aria-selected="false" aria-controls="p-edc">จาก EDC</button>
+  <button role="tab" id="t-ogtt" aria-selected="false" aria-controls="p-ogtt">OGTT 100 กรัม</button>
+  <button role="tab" id="t-bmi" aria-selected="false" aria-controls="p-bmi">น้ำหนักและ BMI</button>
+</div>
+
+<!-- ANC -->
+<section class="panel tabpanel" id="p-anc" role="tabpanel" aria-labelledby="t-anc">
+    <div class="hrbox">
+    <div class="hr-head">
+      <h2 class="hrtitle">High risk pregnancy</h2>
+      <button type="button" class="hr-btn" id="hr-open" aria-expanded="false" aria-controls="hr-pop">ดูเกณฑ์นัด</button>
+    </div>
+    <div class="hr-pop" id="hr-pop" role="dialog" aria-label="เกณฑ์นัดตรวจ High risk pregnancy" hidden>
+      <div class="hr-pop-head"><b>เกณฑ์นัดตรวจ</b><button type="button" id="hr-close" aria-label="ปิด">&#10005;</button></div>
+      <div class="scroll" id="hr-rules"></div>
+    </div>
+    <div id="hr-out"></div>
+  </div>
+  <div class="anc-cols">
+  <div class="anc-main">
+  <div class="us-head">
+    <h2>นัดครั้งต่อไป (นับจากวันที่มารับบริการ)</h2>
+    <img src="images/anc-doctor.jpg" alt="" width="170" height="96">
+  </div>
+  <div class="scroll" id="anc-next"><div class="empty">กรอกวันที่มารับบริการ</div></div>
+  </div>
+  <aside class="popcard" aria-label="เกณฑ์นัดฝากครรภ์ตามแนวใหม่">
+  <h3>นัดฝากครรภ์ตามแนวใหม่ (ตามอายุครรภ์)</h3>
+  <div class="scroll" id="anc-new"><div class="empty">กรอก LMP เพื่อดูตารางนัด</div></div>
+  <p class="note">นัดฝากครรภ์ 8 ครั้งตามช่วงอายุครรภ์</p>
+  </aside>
+  </div>
+
+</section>
+
+<!-- US -->
+<section class="panel tabpanel" id="p-us" role="tabpanel" aria-labelledby="t-us" hidden>
+  <div class="us-head">
+    <h2>คำนวณอายุครรภ์จากผลอัลตราซาวด์</h2>
+    <img src="images/ultrasound-checkup.png" alt="" width="112" height="107">
+  </div>
+  <div class="grid">
+    <div>
+      <label for="us-date">วันที่ตรวจ U/S</label>
+      <input type="hidden" id="us-date"><div class="be" id="us-date-be"></div>
+    </div>
+    <div>
+      <label>อายุครรภ์ที่ตรวจได้</label>
+      <div class="row2">
+        <div><input type="number" id="us-w" min="0" max="45" inputmode="numeric" placeholder="สัปดาห์"></div>
+        <div><input type="number" id="us-d" min="0" max="6" inputmode="numeric" placeholder="วัน"></div>
+      </div>
+    </div>
+  </div>
+  <div id="us-out" style="margin-top:14px"></div>
+</section>
+
+<!-- EDC -->
+<section class="panel tabpanel" id="p-edc" role="tabpanel" aria-labelledby="t-edc" hidden>
+  <div class="us-head">
+    <h2>คำนวณ LMP จากกำหนดคลอด (EDC)</h2>
+    <img src="images/edc-family.jpg" alt="" width="130" height="98">
+  </div>
+  <div class="grid">
+    <div>
+      <label for="edc-in">EDC</label>
+      <input type="hidden" id="edc-in"><div class="be" id="edc-in-be"></div>
+    </div>
+  </div>
+  <div id="edc-out" style="margin-top:14px"></div>
+</section>
+
+<!-- OGTT -->
+<section class="panel tabpanel" id="p-ogtt" role="tabpanel" aria-labelledby="t-ogtt" hidden>
+  <div class="us-head">
+    <h2>OGTT 100 กรัม</h2>
+    <img src="images/blood-tubes.png" alt="" width="120" height="90">
+  </div>
+  <div class="grid">
+    <div><label for="g0">Fasting (อดอาหาร) mg/dL</label><input type="number" id="g0" min="0" max="600" inputmode="numeric"></div>
+    <div><label for="g1">1 ชั่วโมง mg/dL</label><input type="number" id="g1" min="0" max="600" inputmode="numeric"></div>
+    <div><label for="g2">2 ชั่วโมง mg/dL</label><input type="number" id="g2" min="0" max="600" inputmode="numeric"></div>
+    <div><label for="g3">3 ชั่วโมง mg/dL</label><input type="number" id="g3" min="0" max="600" inputmode="numeric"></div>
+  </div>
+  <div id="ogtt-out" style="margin-top:14px"></div>
+</section>
+
+<!-- BMI -->
+<section class="panel tabpanel" id="p-bmi" role="tabpanel" aria-labelledby="t-bmi" hidden>
+  <h2>ดัชนีมวลกายและน้ำหนักที่เหมาะสม</h2>
+  <div class="grid">
+    <div><label for="w0">น้ำหนักก่อนตั้งครรภ์ (กก.)</label><input type="number" id="w0" step="0.1" min="20" max="250" inputmode="decimal"></div>
+    <div><label for="h0">ส่วนสูง (ซม.)</label><input type="number" id="h0" step="0.1" min="100" max="220" inputmode="decimal"></div>
+  </div>
+  <div id="bmi-out" style="margin-top:14px"></div>
+</section>
+
+<footer>
+  ใช้เพื่อช่วยคำนวณเท่านั้น ไม่ใช่การวินิจฉัยทางการแพทย์ ควรยืนยันกับแนวทางเวชปฏิบัติและดุลยพินิจของแพทย์เสมอ
+  <br>กรอกวันที่เป็นปี ค.ศ. ในช่องปฏิทิน ระบบจะแสดงผลลัพธ์เป็นปี พ.ศ.
+</footer>
+</div>
+
+<script>
+(function(){
+  var MONTHS=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+  var DAYS=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+  var MS=86400000;
+  var $=function(id){return document.getElementById(id)};
+
+  function parse(v){ if(!v) return null; var p=v.split("-"); if(p.length!==3) return null; var t=Date.UTC(+p[0],+p[1]-1,+p[2]); return isNaN(t)?null:t; }
+  function add(t,d){ return t+d*MS; }
+  function diffDays(a,b){ return Math.round((a-b)/MS); }
+  function fmt(t,withDow){ var d=new Date(t); var s=d.getUTCDate()+" "+MONTHS[d.getUTCMonth()]+" "+(d.getUTCFullYear()+543); return withDow?("วัน"+DAYS[d.getUTCDay()]+"ที่ "+s):s; }
+  function short(t){ var d=new Date(t); return d.getUTCDate()+" "+MONTHS[d.getUTCMonth()].slice(0,3).replace("มิถ","มิ.ย.")+" "+(d.getUTCFullYear()+543); }
+  function gaText(days){ return Math.floor(days/7)+" สัปดาห์ "+(days%7)+" วัน"; }
+  function todayStr(){ var n=new Date(); var m=("0"+(n.getMonth()+1)).slice(-2), d=("0"+n.getDate()).slice(-2); return n.getFullYear()+"-"+m+"-"+d; }
+  function isoOf(t){ var d=new Date(t); return d.getUTCFullYear()+"-"+("0"+(d.getUTCMonth()+1)).slice(-2)+"-"+("0"+d.getUTCDate()).slice(-2); }
+  function echo(inp,out){ var el=$(inp), t=parse(el.value), bad=!t&&el._bad; $(out).textContent=t?fmt(t,true):(bad?"วันที่ไม่ถูกต้อง":""); $(out).style.color=bad?"var(--red)":""; }
+  function save(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+  function load(k){ try{ return localStorage.getItem(k)||""; }catch(e){ return ""; } }
+
+  function bigDate(label,t){ return '<div class="bigdate"><div class="lbl">'+label+'</div><div class="val">'+fmt(t)+'</div></div>'; }
+  /* ---------- hero ---------- */
+  function renderHero(){
+    var lmp=parse($("lmp").value), svc=parse($("svc").value);
+    echo("lmp","lmp-be"); echo("svc","svc-be");
+    var h=$("hero");
+    if(lmp==null){ h.innerHTML='<div class="empty">กรอก LMP เพื่อดูอายุครรภ์และกำหนดคลอด</div>'; return; }
+    var edc=add(lmp,280);
+    if(svc==null){ h.innerHTML=bigDate('LMP',lmp)+bigDate('กำหนดคลอด (EDC)',edc); return; }
+    var d=diffDays(svc,lmp);
+    if(d<0){ h.innerHTML='<div class="alert">วันที่มารับบริการอยู่ก่อน LMP กรุณาตรวจสอบวันที่</div>'; return; }
+    var tri = d<7*14 ? "ไตรมาสที่ 1" : d<7*28 ? "ไตรมาสที่ 2" : "ไตรมาสที่ 3";
+    var pct=Math.min(100,d/280*100);
+    var left=diffDays(edc,svc);
+    var warn = d>7*42 ? '<div class="alert">อายุครรภ์เกิน 42 สัปดาห์ กรุณาตรวจสอบวันที่</div>' : "";
+    var rem=remindersHTML(d,lmp);
+    var ticks=[0,13,28,40].map(function(w){return '<span style="left:'+(w*7/280*100)+'%">'+w+'</span>'}).join("");
+    h.innerHTML=
+      '<div class="hero"><div>'
+      +'<div class="galbl">อายุครรภ์ (GA) ณ วันที่มารับบริการ</div>'
+      +'<div class="ga-big">'+Math.floor(d/7)+'<small>สัปดาห์</small>'+(d%7)+'<small>วัน</small></div>'
+      +'<span class="tri">'+tri+'</span>'
+      +'<div class="bar" role="img" aria-label="ความคืบหน้า '+Math.round(pct)+' เปอร์เซ็นต์"><i style="width:'+pct+'%"></i></div>'
+      +'<div class="ticks">'+ticks+'</div>'
+      +'<div class="sub" style="margin-top:2px">สัปดาห์ที่ 0 ถึง 40</div>'
+      +'</div><div>'
+      +bigDate('LMP',lmp)
+      +bigDate('กำหนดคลอด (EDC)',edc)
+      +'<div class="kv"><span>รวมเป็นจำนวนวัน</span><b>'+d+' วัน</b></div>'
+      +'<div class="kv"><span>'+(left>=0?'เหลืออีก':'เลยกำหนดมาแล้ว')+'</span><b>'+Math.abs(left)+' วัน</b></div>'
+      +'</div></div>'+rem+warn;
+  }
+
+  /* ---------- reminders ---------- */
+  function remindersHTML(d,lmp){
+    function card(title,start,end,note){
+      var cls,msg;
+      if(d<start){ cls="soon"; msg="ยังไม่ถึงช่วงตรวจ เริ่มได้ตั้งแต่ "+fmt(add(lmp,start),true)+" (อีก "+(start-d)+" วัน)"; }
+      else if(end!=null && d>end){ cls="past"; msg=""; }
+      else { cls="now"; msg="ถึงเวลาแล้ว"+(end!=null?" ควรตรวจภายใน "+fmt(add(lmp,end),true):" ส่งตรวจได้ตั้งแต่ตอนนี้"); }
+      return '<div class="rem '+cls+'"><b>'+(cls==="now"?"แจ้งเตือน: ":"")+title+'</b><span>'+note+(msg?'<br>'+msg:'')+'</span></div>';
+    }
+    return '<div class="rems">'
+      + card("NIPT",7*11,7*20+6,"ตรวจคัดกรองความผิดปกติของโครโมโซมจากเลือดมารดา เมื่อ GA 11 ถึง 20 สัปดาห์")
+      + card("GCT (คัดกรองเบาหวานขณะตั้งครรภ์)",7*24,7*28+6,"ตรวจเมื่อ GA 24 ถึง 28 สัปดาห์")
+      + card("เจาะเลือด Lab 2",7*28,7*32+6,"เจาะเลือดครั้งที่ 2 เมื่อ GA 28 ถึง 32 สัปดาห์")
+      + card("ส่งตรวจ USG",7*36,null,"ส่งอัลตราซาวด์ (USG) เมื่อ GA ครบ 36 สัปดาห์")
+      + card("ส่ง NST",7*38,7*40+6,"ส่งตรวจ NST เมื่อ GA 38 ถึง 40 สัปดาห์")
+      + '</div>';
+  }
+
+  /* ---------- ANC ---------- */
+  function renderANC(){
+    var svc=parse($("svc").value), lmp=parse($("lmp").value);
+    var a=$("anc-next");
+    if(svc==null){ a.innerHTML='<div class="empty">กรอกวันที่มารับบริการ</div>'; }
+    else{
+      var rows=""; for(var i=1;i<=6;i++){ var t=add(svc,7*i);
+        var g = lmp!=null ? gaText(diffDays(t,lmp)) : "-";
+        rows+='<tr class="c'+i+'"><td>อีก '+i+' สัปดาห์</td><td>'+fmt(t)+'</td><td>'+g+'</td></tr>'; }
+      a.innerHTML='<table><thead><tr><th>นัดใน</th><th>วันที่</th><th>อายุครรภ์ ณ วันนัด</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    }
+    var n=$("anc-new");
+    if(lmp==null){ n.innerHTML='<div class="empty">กรอก LMP เพื่อดูตารางนัด</div>'; return; }
+    var svcT=parse($("svc").value);
+    var cur = (svcT!=null && diffDays(svcT,lmp)>=0) ? diffDays(svcT,lmp) : null;
+    var VISITS=[[1,0,12,"ไม่เกิน 12 สัปดาห์"],[2,13,20,"13 ถึง 20+6 สัปดาห์"],[3,21,26,"21 ถึง 26+6 สัปดาห์"],[4,27,30,"27 ถึง 30+6 สัปดาห์"],[5,31,34,"31 ถึง 34+6 สัปดาห์"],[6,35,36,"35 ถึง 36+6 สัปดาห์"],[7,37,38,"37 ถึง 38+6 สัปดาห์"],[8,39,40,"39 ถึง 40+6 สัปดาห์"]];
+    var body="";
+    VISITS.forEach(function(v){
+      var inWin = cur!=null && cur>=7*v[1] && cur<=7*v[2]+6;
+      body+='<tr'+(inWin?' class="cur"':'')+'><td>'+v[0]+(inWin?' <span class="chip">ช่วงปัจจุบัน</span>':'')+'</td><td>'+v[3]+'</td></tr>';
+    });
+    n.innerHTML='<table><thead><tr><th>ครั้งที่</th><th>อายุครรภ์</th></tr></thead><tbody>'+body+'</tbody></table>';
+  }
+
+  function setHTML(el,h){ if(el._h!==h){ el.innerHTML=h; el._h=h; } }
+  /* ---------- Ultrasound ---------- */
+  function renderUS(){
+    echo("us-date","us-date-be");
+    var t=parse($("us-date").value), w=$("us-w").value, d=$("us-d").value;
+    var o=$("us-out");
+    if(t==null||w===""){ setHTML(o,'<div class="empty">กรอกวันที่ตรวจและอายุครรภ์ที่ตรวจได้</div>'); return; }
+    var days=(+w)*7+(+d||0);
+    var lmp=add(t,-days), edc=add(lmp,280), svc=parse($("svc").value);
+    var html='<div class="kv"><span>LMP ที่คำนวณได้</span><b>'+fmt(lmp)+'</b></div>'
+      +'<div class="kv"><span>กำหนดคลอด (EDC)</span><b>'+fmt(edc)+'</b></div>';
+    if(svc!=null&&diffDays(svc,lmp)>=0) html+='<div class="kv"><span>อายุครรภ์ (GA) ณ วันที่มารับบริการ</span><b>'+gaText(diffDays(svc,lmp))+'</b></div>';
+    html+='<p style="margin:12px 0 0"><button class="btn" id="us-use">ใช้ LMP นี้เป็นข้อมูลหลัก</button></p>';
+    setHTML(o,html);
+    $("us-use").onclick=function(){ setLMP(lmp); };
+  }
+
+  /* ---------- EDC ---------- */
+  function renderEDC(){
+    echo("edc-in","edc-in-be");
+    var e=parse($("edc-in").value), o=$("edc-out");
+    if(e==null){ setHTML(o,'<div class="empty">กรอกกำหนดคลอด (EDC)</div>'); return; }
+    var lmp=add(e,-280), svc=parse($("svc").value);
+    var html='<div class="kv"><span>LMP ที่คำนวณได้</span><b>'+fmt(lmp)+'</b></div>';
+    if(svc!=null&&diffDays(svc,lmp)>=0) html+='<div class="kv"><span>อายุครรภ์ (GA) ณ วันที่มารับบริการ</span><b>'+gaText(diffDays(svc,lmp))+'</b></div>';
+    html+='<p style="margin:12px 0 0"><button class="btn" id="edc-use">ใช้ LMP นี้เป็นข้อมูลหลัก</button></p>';
+    setHTML(o,html);
+    $("edc-use").onclick=function(){ setLMP(lmp); };
+  }
+
+  function setLMP(t){
+    setDateVal("lmp",isoOf(t)); update();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  /* ---------- BMI ---------- */
+  var CATS=[
+    {max:18.5,name:"น้ำหนักน้อย",total:[12.5,18],rate:[0.44,0.58]},
+    {max:25,name:"น้ำหนักปกติ",total:[11.5,16],rate:[0.35,0.50]},
+    {max:30,name:"น้ำหนักเกิน",total:[7,11.5],rate:[0.22,0.33]},
+    {max:999,name:"อ้วน",total:[5,9],rate:[0.17,0.27]}
+  ];
+  function renderBMI(){
+    var w=parseFloat($("w0").value), h=parseFloat($("h0").value), o=$("bmi-out");
+    if(!(w>0)||!(h>0)){ o.innerHTML='<div class="empty">กรอกน้ำหนักก่อนตั้งครรภ์และส่วนสูง</div>'; return; }
+    var bmi=w/Math.pow(h/100,2);
+    var c=CATS.filter(function(x){return bmi<x.max})[0];
+    var html='<div class="kv"><span>ดัชนีมวลกาย (BMI)</span><b>'+bmi.toFixed(2)+' <span class="chip">'+c.name+'</span></b></div>';
+    var lmp=parse($("lmp").value), svc=parse($("svc").value);
+    if(lmp!=null&&svc!=null&&diffDays(svc,lmp)>=0){
+      var wk=diffDays(svc,lmp)/7, lo,hi;
+      if(wk<=13){ lo=w+0.5; hi=w+2; }
+      else { lo=w+0.5+(wk-13)*c.rate[0]; hi=w+0.5+(wk-13)*c.rate[1]; }
+      html+='<div style="margin:16px 0 4px" class="sub">น้ำหนักที่เหมาะสม ณ วันที่มารับบริการ (อายุครรภ์ '+gaText(diffDays(svc,lmp))+')</div>'
+        +'<div class="range">'+lo.toFixed(2)+' ถึง '+hi.toFixed(2)+' กก.</div>';
+    } else {
+      html+='<div class="alert">กรอก LMP และวันที่มารับบริการด้านบน เพื่อดูน้ำหนักที่เหมาะสมตามอายุครรภ์</div>';
+    }
+    html+='<div style="margin:16px 0 4px" class="sub">น้ำหนักที่ควรเพิ่มขึ้นตลอดการตั้งครรภ์ ('+c.total[0]+' ถึง '+c.total[1]+' กก.)</div>'
+      +'<div class="range">'+(w+c.total[0]).toFixed(2)+' ถึง '+(w+c.total[1]).toFixed(2)+' กก. <span class="sub">ณ ครบกำหนด</span></div>'
+      +'<p class="note">เกณฑ์จาก Institute of Medicine (IOM) สหรัฐอเมริกา: ไตรมาสแรกเพิ่มประมาณ 0.5 กก. หลังจากนั้นเพิ่มสัปดาห์ละ '+c.rate[0]+' ถึง '+c.rate[1]+' กก.</p>';
+    o.innerHTML=html;
+  }
+
+  /* ---------- OGTT ---------- */
+  var OG=[["Fasting (อดอาหาร)",95,"g0"],["1 ชั่วโมง",180,"g1"],["2 ชั่วโมง",155,"g2"],["3 ชั่วโมง",140,"g3"]];
+  var IC_OK='<svg class="ic" viewBox="0 0 24 24" role="img" aria-label="ปกติ"><circle cx="12" cy="12" r="11" fill="url(#gG)"/><ellipse cx="12" cy="6.6" rx="7" ry="3.4" fill="#fff" opacity=".28"/></svg>';
+  var IC_HI='<svg class="ic ic-hi" viewBox="0 0 24 28" role="img" aria-label="สูงกว่าเกณฑ์"><path d="M12 1.2 22.8 13.2H16.6V26.8H7.4V13.2H1.2Z" fill="url(#gR)" stroke="#a80c18" stroke-width=".8" stroke-linejoin="round"/><path d="M12 5.6 19 12.2H14.6V24.6H9.4V12.2H5Z" fill="#fff" opacity=".22"/></svg>';
+  var IC_LO='<svg class="ic ic-hi" viewBox="0 0 24 28" role="img" aria-label="ต่ำกว่า 60"><g transform="rotate(180 12 14)"><path d="M12 1.2 22.8 13.2H16.6V26.8H7.4V13.2H1.2Z" fill="url(#gR)" stroke="#a80c18" stroke-width=".8" stroke-linejoin="round"/><path d="M12 5.6 19 12.2H14.6V24.6H9.4V12.2H5Z" fill="#fff" opacity=".22"/></g></svg>';
+  function renderOGTT(){
+    var o=$("ogtt-out"), rows="", abn=0, low=0, filled=0, LOW=60;
+    OG.forEach(function(r){
+      var v=$(r[2]).value, st="-", cls="";
+      if(v!==""){
+        filled++;
+        if(+v<LOW){ low++; st="ต่ำกว่า "+LOW; cls="lo"; }
+        else if(+v>r[1]){ abn++; st="สูงกว่าเกณฑ์"; cls="hi"; }
+        else { st="ปกติ"; cls="ok"; }
+      }
+      var ic = cls==="ok" ? IC_OK : cls==="hi" ? IC_HI : cls==="lo" ? IC_LO : "";
+      rows+='<tr><td>'+r[0]+'</td><td>'+LOW+' ถึง '+r[1]+'</td><td>'+(v===""?"-":v)+'</td><td class="'+cls+'">'+st+'</td><td class="icn">'+ic+'</td></tr>';
+    });
+    var html='<div class="scroll"><table><thead><tr><th>เวลา</th><th>เกณฑ์ปกติ (mg/dL)</th><th>ผลตรวจ</th><th>แปลผล</th><th class="icn">สัญลักษณ์</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+    if(abn>=2) html+='<div class="og-alert" role="alert">แจ้งเตือน: ผลสูงกว่าเกณฑ์ '+abn+' ค่า (ตั้งแต่ 2 ค่าขึ้นไป) ส่งพบแพทย์</div>';
+    else if(filled===4) html+='<div class="og-ok">ผลสูงกว่าเกณฑ์ '+abn+' ค่า (น้อยกว่า 2 ค่า) ไม่เข้าเกณฑ์ส่งพบแพทย์จาก OGTT</div>';
+    else if(filled>0) html+='<div class="note">ผลสูงกว่าเกณฑ์ '+abn+' ค่า กรอกให้ครบ 4 ค่าเพื่อแปลผล</div>';
+    else html='<div class="empty">กรอกค่าน้ำตาลแต่ละช่วงเวลา</div>'+html;
+    if(low>0) html+='<div class="note">มีค่าต่ำกว่า '+LOW+' mg/dL จำนวน '+low+' ค่า (ไม่นับรวมในเกณฑ์สูงกว่าเกณฑ์ตั้งแต่ 2 ค่าขึ้นไป)</div>';
+    o.innerHTML=html;
+  }
+
+  /* ---------- High risk pregnancy ---------- */
+  function hrInterval(days){ if(days<33*7) return 4; if(days<36*7) return 3; if(days<39*7) return 2; return 1; }
+  function renderHR(){
+    var lmp=parse($("lmp").value), svc=parse($("svc").value);
+    var d=(lmp!=null&&svc!=null)?diffDays(svc,lmp):null;
+    var RULES=[["< 33 สัปดาห์ (ถึง 32+6)",0,33*7-1,4],["33 ถึง 35+6 สัปดาห์",33*7,36*7-1,3],["36 ถึง 38+6 สัปดาห์",36*7,39*7-1,2],["39 สัปดาห์ขึ้นไป",39*7,99999,1]];
+    var rows="";
+    RULES.forEach(function(r){
+      var on=d!=null&&d>=r[1]&&d<=r[2];
+      rows+='<tr'+(on?' class="cur"':'')+'><td>'+r[0]+(on?' <span class="chip">ช่วงปัจจุบัน</span>':'')+'</td><td>ทุก '+r[3]+' สัปดาห์</td></tr>';
+    });
+    $("hr-rules").innerHTML='<table><thead><tr><th>อายุครรภ์</th><th>นัดตรวจ</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    var o=$("hr-out");
+    if(d==null){ o.innerHTML='<div class="empty">กรอก LMP และวันที่มารับบริการ เพื่อคำนวณวันนัดอัตโนมัติ</div>'; return; }
+    if(d<0){ o.innerHTML='<div class="alert">วันที่มารับบริการอยู่ก่อน LMP กรุณาตรวจสอบวันที่</div>'; return; }
+    var iv=hrInterval(d), nt=add(svc,7*iv), f={t:nt,g:diffDays(nt,lmp),iv:iv};
+    o.innerHTML=
+      '<div class="bigdate"><div class="lbl">วันนัดครั้งต่อไป</div><div class="val">'+fmt(f.t,true)+' <span style="font-size:.8em">('+f.iv+(f.iv===1?' wk':' wks')+')</span></div>'
+      +'<div class="sub">GA ณ วันที่มารับบริการ '+gaText(d)+' ตามเกณฑ์นัดทุก '+f.iv+' สัปดาห์ (GA ณ วันนัด '+gaText(f.g)+')</div></div>';
+  }
+
+  function update(){
+    save("ga_lmp",$("lmp").value);
+    renderHero(); renderANC(); renderHR(); renderUS(); renderEDC(); renderBMI(); renderOGTT();
+  }
+
+  /* ---------- tabs ---------- */
+  var tabs=document.querySelectorAll('[role="tab"]');
+  function show(id){
+    tabs.forEach(function(b){
+      var on=b.id===id; b.setAttribute("aria-selected",on);
+      $(b.getAttribute("aria-controls")).hidden=!on;
+    });
+  }
+  tabs.forEach(function(b){ b.addEventListener("click",function(){ show(b.id); }); });
+
+  ["lmp","svc","us-date","us-w","us-d","edc-in","w0","h0","g0","g1","g2","g3"].forEach(function(id){
+    $(id).addEventListener("input",update);
+    $(id).addEventListener("change",update);
+  });
+
+  var hrBtn=$("hr-open"), hrPop=$("hr-pop");
+  function hrToggle(open){ hrPop.hidden=!open; hrBtn.setAttribute("aria-expanded",open?"true":"false"); }
+  hrBtn.addEventListener("click",function(e){ e.stopPropagation(); hrToggle(hrPop.hidden); });
+  $("hr-close").addEventListener("click",function(){ hrToggle(false); hrBtn.focus(); });
+  document.addEventListener("click",function(e){ if(!hrPop.hidden && !hrPop.contains(e.target) && e.target!==hrBtn) hrToggle(false); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape" && !hrPop.hidden){ hrToggle(false); hrBtn.focus(); } });
+
+  /* ---------- ตัวเลือกวันที่แบบ พ.ศ. ---------- */
+  function initDateSel(id){
+    var hid=$(id);
+    var wrap=document.createElement("div"); wrap.className="dtxt";
+    var inp=document.createElement("input");
+    inp.type="text"; inp.inputMode="numeric"; inp.autocomplete="off"; inp.maxLength=10;
+    inp.placeholder="วว/ดด/ปปปป (พ.ศ.)"; inp.setAttribute("aria-label","วันที่ (วว/ดด/ปปปป พ.ศ.)");
+    wrap.appendChild(inp);
+    hid.parentNode.insertBefore(wrap,hid);
+    function pad(n){ return ("0"+n).slice(-2); }
+    function fmtDigits(raw){
+      var d=raw.replace(/\D/g,"").slice(0,8), out=d.slice(0,2);
+      if(d.length>2) out+="/"+d.slice(2,4);
+      if(d.length>4) out+="/"+d.slice(4);
+      return out;
+    }
+    function compose(){
+      var t=inp.value, iso="";
+      var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(t);
+      if(m){
+        var dd=+m[1], mm=+m[2], yy=+m[3];
+        if(yy>2400) yy-=543;
+        var dt=new Date(Date.UTC(yy,mm-1,dd));
+        if(mm>=1&&mm<=12&&dd>=1&&dt.getUTCFullYear()===yy&&dt.getUTCMonth()===mm-1&&dt.getUTCDate()===dd) iso=yy+"-"+pad(mm)+"-"+pad(dd);
+      }
+      hid._bad=(t.length===10&&!iso);
+      inp.setAttribute("aria-invalid",hid._bad?"true":"false");
+      hid.value=iso;
+      update();
+    }
+    inp.addEventListener("input",function(){ inp.value=fmtDigits(inp.value); compose(); });
+    hid._sync=function(v){
+      var p=(v||"").split("-");
+      hid._bad=false;
+      inp.value = p.length===3 ? pad(+p[2])+"/"+pad(+p[1])+"/"+(+p[0]+543) : "";
+      inp.setAttribute("aria-invalid","false");
+    };
+  }
+  function setDateVal(id,v){ var h=$(id); h.value=v||""; if(h._sync) h._sync(v); }
+
+  ["lmp","svc","us-date","edc-in"].forEach(initDateSel);
+  setDateVal("svc",todayStr());
+  var saved=load("ga_lmp"); if(saved) setDateVal("lmp",saved);
+  update();
+})();
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load",function(){
+    try{ navigator.serviceWorker.register("sw.js"); }catch(e){}
+  });
+}
+</script>
+</body>
+</html>
