@@ -395,7 +395,22 @@ footer{margin-top:26px;font-size:.82rem;color:var(--muted)}
       if(d<start){ cls="soon"; msg="ยังไม่ถึงช่วงตรวจ เริ่มได้ตั้งแต่ "+fmt(add(lmp,start),true)+" (อีก "+(start-d)+" วัน)"; }
       else if(end!=null && d>end){ cls="past"; msg=""; }
       else { cls="now"; msg="ถึงเวลาแล้ว"+(end!=null?" ควรตรวจภายใน "+fmt(add(lmp,end),true):" ส่งตรวจได้ตั้งแต่ตอนนี้"); }
-      return '<div class="rem '+cls+'"><b>'+(cls==="now"?"แจ้งเตือน: ":"")+title+'</b><span>'+note+(msg?'<br>'+msg:'')+'</span></div>';
+     
+var isVaccine = title.indexOf("Influenza") !== -1 ||
+                title.indexOf("aP (ไอกรน)") !== -1;
+
+var syringe = isVaccine
+  ? '<span class="vaccine-icon">💉</span> '
+  : '';
+
+var check = (isVaccine && cls === "now")
+  ? '<span class="vaccine-check">✔ ถึงกำหนด</span>'
+  : '';
+
+return '<div class="rem '+cls+'"><b>'
+  +(cls==="now"?"แจ้งเตือน: ":"")
+  +syringe+title+check
+  +'</b><span>'+note+(msg?'<br>'+msg:'')+'</span></div>';
     }
     return '<div class="rems">'
       + card("NIPT",7*11,7*20+6,"ตรวจคัดกรองความผิดปกติของโครโมโซมจากเลือดมารดา เมื่อ GA 11 ถึง 20 สัปดาห์")
