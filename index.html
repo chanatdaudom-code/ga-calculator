@@ -193,6 +193,56 @@ footer{margin-top:26px;font-size:.82rem;color:var(--muted)}
 }
 
 
+/* รูปเข็มฉีดยา */
+.vaccine-row .vaccine-icon {
+  font-size: 20px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* จัดกล่องวัคซีน */
+.vaccine-row .rem {
+  position: relative;
+}
+
+/* สีเขียวเข้มเมื่อถึงกำหนด */
+.vaccine-row .rem.now {
+  background: #2e7d32;
+  border: 2px solid #14532d;
+  color: #ffffff;
+  padding: 14px 150px 14px 14px;
+  min-height: 130px;
+}
+
+/* ตัวอักษรสีขาวเมื่อถึงกำหนด */
+.vaccine-row .rem.now b,
+.vaccine-row .rem.now span {
+  color: #ffffff;
+}
+
+/* ป้ายเครื่องหมายถูกมุมขวาบน */
+.vaccine-row .vaccine-check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  background: #ffffff;
+  color: #166534 !important;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 17px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ปรับการแสดงผลบนมือถือ */
+@media (max-width: 480px) {
+  .vaccine-row .rem.now {
+    padding: 65px 14px 14px;
+  }
+}
+
 </style>
 </head>
 <body>
