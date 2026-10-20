@@ -160,6 +160,39 @@ td.lo{color:var(--orange);font-weight:700}
 .rem.soon{border-color:var(--teal)}
 .rem.past{border-color:var(--warn)}
 footer{margin-top:26px;font-size:.82rem;color:var(--muted)}
+  footer{margin-top:26px;font-size:.82rem;color:var(--muted)}
+
+/* กล่องวัคซีนสีเหลือง แถวที่ 2 */
+.vaccine-row {
+  margin-top: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.vaccine-row .rem {
+  background: #fff8d6;
+  border: 2px solid #e2b64f;
+  border-radius: 9px;
+  padding: 10px 12px;
+  color: #805600;
+}
+
+.vaccine-row .rem b,
+.vaccine-row .rem span {
+  color: #805600;
+}
+
+.vaccine-row .rem.now {
+  background: #ffe08a;
+  border-color: #b77900;
+}
+
+@media (max-width: 480px) {
+  .vaccine-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 </style>
 </head>
 <body>
