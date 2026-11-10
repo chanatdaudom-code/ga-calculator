@@ -294,6 +294,8 @@ footer{margin-top:26px;font-size:.82rem;color:var(--muted)}
     <div class="hr-head">
       <h2 class="hrtitle">High risk pregnancy</h2>
       <button type="button" class="hr-btn" id="hr-open" aria-expanded="false" aria-controls="hr-pop">ดูเกณฑ์นัด</button>
+      
+<button type="button" class="btn" id="pih-open">ประเมินความเสี่ยง Preeclampsia</button>
     </div>
     <div class="hr-pop" id="hr-pop" role="dialog" aria-label="เกณฑ์นัดตรวจ High risk pregnancy" hidden>
       <div class="hr-pop-head"><b>เกณฑ์นัดตรวจ</b><button type="button" id="hr-close" aria-label="ปิด">&#10005;</button></div>
@@ -700,5 +702,118 @@ if("serviceWorker" in navigator){
   });
 }
 </script>
+  
+<!-- Preeclampsia Risk Popup -->
+<div id="pih-popup" role="dialog" aria-modal="true"
+     aria-label="การประเมินความเสี่ยงต่อภาวะครรภ์เป็นพิษ"
+     hidden style="position:fixed;inset:0;z-index:9999;
+     background:rgba(0,0,0,.55);padding:16px;overflow:auto;">
+
+  <div style="background:#fff;color:#263238;border-radius:16px;
+              max-width:760px;margin:20px auto;padding:18px;
+              font-family:inherit;">
+
+    <button type="button" id="pih-close"
+      style="float:right;background:#eee;border:0;
+             border-radius:50%;padding:8px 12px;cursor:pointer;"
+      aria-label="ปิดหน้าต่าง">✕</button>
+
+    <div style="clear:both"></div>
+<div style="text-align:center;margin:12px 0 16px;">
+  <img src="images/images.jfif"
+       alt="Pregnancy Induced Hypertension"
+       style="display:block;width:100%;max-width:340px;
+              height:auto;margin:auto;border-radius:12px;">
+</div>
+
+    <div style="background:#EAF6FF;border:2px solid #79BDEB;
+                border-radius:12px;padding:14px;text-align:center;
+                margin-bottom:14px;">
+      <h2 style="color:#1976B9;margin:0;font-size:19px;">
+        การประเมินความเสี่ยงต่อภาวะครรภ์เป็นพิษ
+      </h2>
+      <div style="color:#1976B9;">(Preeclampsia)</div>
+    </div>
+
+    <div style="background:#FFF0F5;border:2px solid #E99AB9;
+                border-radius:12px;padding:14px;margin-bottom:12px;">
+      <strong style="color:#AD285A;">1. ความเสี่ยงสูง (High risk)</strong>
+      <ol>
+        <li>มีประวัติภาวะครรภ์เป็นพิษในการตั้งครรภ์ในอดีต</li>
+        <li>ครรภ์แฝด ตั้งแต่ 2 คนขึ้นไป (Multifetal gestation)</li>
+        <li>มีภาวะความดันโลหิตสูงเรื้อรังก่อนตั้งครรภ์ หรือได้รับการวินิจฉัยก่อนอายุครรภ์ 20 สัปดาห์ (Chronic hypertension)</li>
+        <li>โรคเบาหวานชนิดที่ 1 หรือ 2</li>
+        <li>โรคไตเรื้อรัง</li>
+        <li>โรคภูมิคุ้มกันตนเอง เช่น SLE หรือ Antiphospholipid syndrome</li>
+      </ol>
+    </div>
+
+    <div style="background:#FFF9E5;border:2px solid #E8C56B;
+                border-radius:12px;padding:14px;margin-bottom:12px;">
+      <strong style="color:#93620D;">2. ความเสี่ยงปานกลาง (Moderate risk)</strong>
+      <ol>
+        <li>ครรภ์แรก (Nulliparity)</li>
+        <li>BMI มากกว่า 30</li>
+        <li>มีประวัติครอบครัวเป็นครรภ์เป็นพิษ</li>
+        <li>อายุหญิงตั้งครรภ์มากกว่า 35 ปี</li>
+        <li>เคยคลอดทารกน้ำหนักน้อยกว่าอายุครรภ์ หรือมีระยะห่างจากการตั้งครรภ์ครั้งก่อนตั้งแต่ 10 ปี</li>
+      </ol>
+    </div>
+
+    <div style="background:#EAF7EC;border:2px solid #81C995;
+                border-radius:12px;padding:14px;margin-bottom:12px;">
+      <strong style="color:#216A39;">3. การพิจารณาให้ Aspirin (ASA)</strong>
+      <p>พิจารณาในกรณีมี High risk มากกว่า 1 ข้อ หรือ Moderate risk มากกว่า 2 ข้อ หากไม่มีข้อห้าม</p>
+      <ul>
+        <li>Aspirin 81 mg 2×1 PO HS ตั้งแต่อายุครรภ์ 11–36 wks</li>
+        <li>BW &lt; 40 kg: Start ASA (81) 1.5×1 PO HS ตั้งแต่อายุครรภ์ 11–36 wks</li>
+        <li>พิจารณาหยุดเมื่ออายุครรภ์ 36 wks หรือมีภาวะครรภ์เป็นพิษ</li>
+      </ul>
+    </div>
+
+    <div style="background:#FFF0F0;border:2px solid #E58A8A;
+                border-radius:12px;padding:14px;margin-bottom:12px;">
+      <strong style="color:#B4232C;">4. ข้อห้ามใช้ Aspirin ตามเอกสาร</strong>
+      <ol>
+        <li>Active peptic ulceration — แผลในกระเพาะอาหารที่กำลังเป็นอยู่</li>
+        <li>Aspirin allergy — แพ้ยา Aspirin</li>
+        <li>Bleeding disorders — ภาวะเลือดออกผิดปกติ</li>
+        <li>Renal failure — ภาวะไตวาย</li>
+        <li>Severe liver disease — โรคตับรุนแรง</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+<!-- End Preeclampsia Risk Popup -->
+  
+<script>
+(function () {
+  const popup = document.getElementById("pih-popup");
+  const openBtn = document.getElementById("pih-open");
+  const closeBtn = document.getElementById("pih-close");
+
+  
+  if (!popup || !openBtn || !closeBtn) return;
+
+  openBtn.addEventListener("click", function () {
+    popup.hidden = false;
+    popup.style.display = "block";
+  });
+
+  closeBtn.addEventListener("click", function () {
+    popup.hidden = true;
+    popup.style.display = "none";
+  });
+
+  popup.addEventListener("click", function (event) {
+    if (event.target === popup) {
+      popup.hidden = true;
+      popup.style.display = "none";
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
