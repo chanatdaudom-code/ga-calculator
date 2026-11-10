@@ -243,6 +243,89 @@ footer{margin-top:26px;font-size:.82rem;color:var(--muted)}
   }
 }
 
+/* ANC Care Guidelines Popup */
+.anc-guide-popup[hidden] {
+  display: none !important;
+}
+
+.anc-guide-popup {
+  position: fixed;
+  z-index: 9999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 620px);
+  max-height: 85dvh;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 2px solid #86CFA1;
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 12px 45px #0003;
+  color: #26272b;
+}
+
+/* ส่วนหัวสีเขียวพาสเทล */
+.anc-guide-head {
+  position: relative;
+  background: #EAF8EF;
+  border: 2px solid #86CFA1;
+  border-radius: 14px;
+  padding: 18px 44px 18px 14px;
+  color: #17663C;
+}
+
+.anc-guide-head strong {
+  display: block;
+  font-size: 18px;
+}
+
+#anc-guide-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ffffff;
+  color: #17663C;
+  border: 1px solid #86CFA1;
+  border-radius: 8px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* เนื้อหาทั้งสองส่วน */
+.anc-guide-body {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.anc-guide-body section {
+  padding: 14px;
+  border-radius: 14px;
+}
+
+.anc-guide-body h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.anc-guide-body li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+/* ส่วนที่ 1 สีชมพูพาสเทล */
+.anc-guide-first {
+  background: #FDF2F8;
+  border: 2px solid #F9A8D4;
+}
+
+/* ส่วนที่ 2 สีฟ้าพาสเทล */
+.anc-guide-follow {
+  background: #F0F9FF;
+  border: 2px solid #7DD3FC;
+}
+
 </style>
 </head>
 <body>
@@ -295,7 +378,9 @@ footer{margin-top:26px;font-size:.82rem;color:var(--muted)}
       <h2 class="hrtitle">High risk pregnancy</h2>
       <button type="button" class="hr-btn" id="hr-open" aria-expanded="false" aria-controls="hr-pop">ดูเกณฑ์นัด</button>
       
-<button type="button" class="btn" id="pih-open">ประเมินความเสี่ยง Preeclampsia</button>
+<button type="button" class="btn" id="pih-open">ประเมินความเสี่ยง Preeclampsia</button>   
+<button type="button" class="btn" id="anc-guide-open">📋 แนวทาง ANC</button>
+
     </div>
     <div class="hr-pop" id="hr-pop" role="dialog" aria-label="เกณฑ์นัดตรวจ High risk pregnancy" hidden>
       <div class="hr-pop-head"><b>เกณฑ์นัดตรวจ</b><button type="button" id="hr-close" aria-label="ปิด">&#10005;</button></div>
@@ -303,7 +388,47 @@ footer{margin-top:26px;font-size:.82rem;color:var(--muted)}
     </div>
     <div id="hr-out"></div>
   </div>
+ <!-- ANC Care Guidelines Popup -->
+<div id="anc-guide-popup" class="anc-guide-popup" role="dialog"
+     aria-label="แนวทางการดูแลหญิงตั้งครรภ์" hidden>
+  <div class="anc-guide-head">
+    <strong>แนวทางการดูแลหญิงตั้งครรภ์</strong>
+    <button type="button" id="anc-guide-close"
+            aria-label="ปิด">×</button>
+    <div>ANC Care Guidelines</div>
+  </div>
+
+  <div class="anc-guide-body">
+    <section class="anc-guide-first">
+      <h3>ส่วนที่ 1 การประเมินเมื่อฝากครรภ์ครั้งแรก (1st ANC)</h3>
+      <ul>
+        <li>ประเมินความเสี่ยงเบาหวานขณะตั้งครรภ์ (GDM)</li>
+        <li>ประเมินความเสี่ยงภาวะครรภ์เป็นพิษ (Preeclampsia)</li>
+        <li>ประเมินประวัติคลอดก่อนกำหนด (Preterm)</li>
+        <li>ประเมินโรคร่วม เช่น โรคหัวใจ โลหิตจาง HIV ซิฟิลิส ตับอักเสบ คู่เสี่ยง Thalassemia ชนิดรุนแรง และโรคอื่น ๆ</li>
+        <li>คัดกรอง Down's syndrome / NIPT ช่วง GA 11–20 สัปดาห์</li>
+        <li>ตรวจ 50 g GCT ช่วง GA 24–28 สัปดาห์ (กรณีฝากครรภ์ครั้งแรก)</li>
+        <li>กรณีคลำพบ HF และ UPT Positive ส่งพบแพทย์เพื่อตรวจ USG และประเมินความเสี่ยง</li>
+      </ul>
+      <p>หากพบความเสี่ยง Preeclampsia ให้พิจารณา Aspirin ตามเกณฑ์และข้อห้ามใช้ โดยอ้างอิงแนวทาง GA 11–36 สัปดาห์ของหน่วยบริการ</p>
+    </section>
+
+    <section class="anc-guide-follow">
+      <h3>ส่วนที่ 2 แนวทางการดูแลระหว่างฝากครรภ์ (ANC Follow-up)</h3>
+      <ul>
+        <li>GA 11–20 สัปดาห์: คัดกรอง Down's syndrome / NIPT</li>
+        <li>GA 20 สัปดาห์: ตรวจ USG และประเมินความเสี่ยง</li>
+        <li>GA 24–28 สัปดาห์: ตรวจ 50 g GCT ทุกราย</li>
+        <li>GA 36 สัปดาห์: ตรวจ USG และ <strong style="color:#DC2626">พิจารณาหยุด Aspirin ตามแนวทาง</strong></li>
+        <li>GA 38–41 สัปดาห์: ประเมินสุขภาพทารกด้วย USG, AFI และ NST</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
   <div class="anc-cols">
+ 
+
   <div class="anc-main">
   <div class="us-head">
     <h2>นัดครั้งต่อไป (นับจากวันที่มารับบริการ)</h2>
@@ -703,7 +828,37 @@ if("serviceWorker" in navigator){
 }
 </script>
   
-<!-- Preeclampsia Risk Popup -->
+
+  <!-- ANC Care Guidelines: Open / Close -->
+<script>
+(function () {
+  const openBtn = document.getElementById("anc-guide-open");
+  const closeBtn = document.getElementById("anc-guide-close");
+  const popup = document.getElementById("anc-guide-popup");
+
+  if (!openBtn || !closeBtn || !popup) return;
+
+  openBtn.addEventListener("click", function () {
+    popup.hidden = false;
+    closeBtn.focus();
+  });
+
+  function closePopup() {
+    popup.hidden = true;
+    openBtn.focus();
+  }
+
+  closeBtn.addEventListener("click", closePopup);
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && !popup.hidden) {
+      closePopup();
+    }
+  });
+})();
+</script>
+
+  <!-- Preeclampsia Risk Popup -->
 <div id="pih-popup" role="dialog" aria-modal="true"
      aria-label="การประเมินความเสี่ยงต่อภาวะครรภ์เป็นพิษ"
      hidden style="position:fixed;inset:0;z-index:9999;
