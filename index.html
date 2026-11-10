@@ -591,7 +591,12 @@ return '<div class="rem '+cls+'"><b>'
   }
 
   /* ---------- High risk pregnancy ---------- */
-  function hrInterval(days){ if(days<33*7) return 4; if(days<36*7) return 3; if(days<39*7) return 2; return 1; }
+  function hrInterval(days){
+  if(days < 33*7) return 4;
+  if(days < 36*7) return 3;
+  if(days < 37*7) return 2;
+  return 1;
+}
   function renderHR(){
     var lmp=parse($("lmp").value), svc=parse($("svc").value);
     var d=(lmp!=null&&svc!=null)?diffDays(svc,lmp):null;
