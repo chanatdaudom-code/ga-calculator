@@ -1,7 +1,7 @@
 // เปลี่ยนเลขเวอร์ชันนี้ทุกครั้งที่แก้ไฟล์ เพื่อให้เครื่องผู้ใช้โหลดของใหม่
-const CACHE = "ga-calc-v35";
+const CACHE = "ga-calc-v36";
 const FILES = ["./", "index.html", "manifest.webmanifest",
-  "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/favicon-32.png", "images/mother-baby.png", "images/ultrasound-checkup.png", "images/blood-tubes.png", "images/anc-doctor.jpg", "images/edc-family.jpg"];
+  "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/favicon-32.png", "images/mother-baby.png", "images/ultrasound-checkup.png", "images/blood-tubes.png", "images/anc-doctor.jpg","images/anc-mother.png", "images/edc-family.jpg"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
