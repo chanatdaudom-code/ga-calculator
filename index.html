@@ -600,7 +600,12 @@ return '<div class="rem '+cls+'"><b>'
   function renderHR(){
     var lmp=parse($("lmp").value), svc=parse($("svc").value);
     var d=(lmp!=null&&svc!=null)?diffDays(svc,lmp):null;
-    var RULES=[["< 33 สัปดาห์ (ถึง 32+6)",0,33*7-1,4],["33 ถึง 35+6 สัปดาห์",33*7,36*7-1,3],["36 ถึง 38+6 สัปดาห์",36*7,39*7-1,2],["39 สัปดาห์ขึ้นไป",39*7,99999,1]];
+    var RULES=[
+  ["< 33 สัปดาห์ (ถึง 32+6)",0,33*7-1,4],
+  ["33 ถึง 35+6 สัปดาห์",33*7,36*7-1,3],
+  ["36 ถึง 36+6 สัปดาห์",36*7,37*7-1,2],
+  ["37 ถึง 41 สัปดาห์",37*7,42*7-1,1]
+];
     var rows="";
     RULES.forEach(function(r){
       var on=d!=null&&d>=r[1]&&d<=r[2];
